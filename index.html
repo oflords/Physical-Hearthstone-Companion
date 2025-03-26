@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>oflords.dev</title>
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    /* Container for the splash content */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 3rem;
+      letter-spacing: 1px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 200px);
+      gap: 20px;
+    }
+    /* Grid item styles */
+    .grid-item {
+      background-color: #1f1f1f;
+      border: 2px solid #333;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .grid-item:hover {
+      transform: scale(1.05);
+      background-color: #272727;
+    }
+    .grid-item a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+      text-align: center;
+      padding: 20px;
+    }
+    .grid-item a h2 {
+      margin-top: 60px;
+      font-size: 1.5rem;
+    }
+    /* Footer styles */
+    .footer {
+      background-color: #1f1f1f;
+      border-top: 1px solid #333;
+      padding: 20px;
+      text-align: center;
+    }
+    .footer a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: inherit;
+      vertical-align: middle;
+      transition: opacity 0.3s ease;
+    }
+    .footer a:hover {
+      opacity: 0.7;
+    }
+    .footer img {
+      width: 24px;
+      height: 24px;
+      filter: invert(80%);
+    }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+      }
+      .grid-item {
+        height: 150px;
+      }
+    }
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .grid-item {
+        height: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>oflords.dev</h1>
+      <p>Explore my work through the links below</p>
+    </div>
+    <div class="grid">
+      <div class="grid-item">
+        <a href="https://github.com/oflords/Physical-Hearthstone">
+          <h2>Physical Hearthstone 🃏</h2>
+        </a>
+      </div>
+      <div class="grid-item">
+        <a href="companion.html">
+          <h2>Physical Hearthstone Companion 🎲</h2>
+        </a>
+      </div>
+      <div class="grid-item">
+        <a href="#">
+          <h2>Coming Soon ⏳</h2>
+        </a>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <a href="https://www.youtube.com/@oflords" target="_blank" aria-label="YouTube">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/youtube.svg" alt="YouTube Logo" />
+    </a>
+    <a href="https://twitter.com/oflords" target="_blank" aria-label="Twitter">
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/twitter.svg" alt="Twitter Logo" />
+    </a>
+    <a href="https://github.com/oflords" target="_blank" aria-label="GitHub">
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/github.svg" alt="GitHub Logo" />
+    </a>
+  </footer>
+</body>
+</html>

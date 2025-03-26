@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hearthstone Tracker</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: #fff;
+        }
+
+        .mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #333 url('your-background-image.jpg') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .center-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .disabled {
+            background: grey;
+            cursor: not-allowed;
+        }
+
+        .selection-container,
+        .game-container {
+            display: none;
+            height: 100%;
+            width: 100%;
+        }
+
+        .selection-container.active,
+        .game-container.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .players {
+            flex: 1;
+            display: flex;
+        }
+
+        .player {
+            flex: 1;
+            border: 1px solid #555;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .player h2 {
+            margin-bottom: 10px;
+        }
+
+        .characters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .character {
+            width: 80px;
+            height: 80px;
+            background: #444;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .character.selected {
+            background: #0080ff;
+        }
+
+        .middle-button-container {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+        }
+
+        .counter {
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .rng-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .rng-container input {
+            width: 50px;
+            padding: 5px;
+            margin-right: 5px;
+            text-align: center;
+        }
+
+        .fade {
+            transition: opacity 0.5s ease-in-out;
+            opacity: 1;
+        }
+
+        .glow {
+            color: #fff; /* Text color */
+            text-shadow: 0 0 10px yellow; /* Horizontal offset, vertical offset, blur radius, and glow color */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mask and Setup Game Button -->
+    <div id="mask" class="mask">
+        <button id="setupBtn" class="center-button">Setup Game</button>
+    </div>
+
+    <!-- Selection Screen -->
+    <div id="selectionScreen" class="selection-container">
+        <div class="players">
+            <div class="player" id="player1">
+                <h2>Player 1</h2>
+                <div class="characters" id="characters1">
+                    <!-- 9 character options -->
+                    <div class="character" data-name="Warrior">Warrior</div>
+                    <div class="character" data-name="Mage">Mage</div>
+                    <div class="character" data-name="Rogue">Rogue</div>
+                    <div class="character" data-name="Hunter">Hunter</div>
+                    <div class="character" data-name="Priest">Priest</div>
+                    <div class="character" data-name="Warlock">Warlock</div>
+                    <div class="character" data-name="Paladin">Paladin</div>
+                    <div class="character" data-name="Druid">Druid</div>
+                    <div class="character" data-name="Shaman">Shaman</div>
+                </div>
+            </div>
+            <div class="player" id="player2">
+                <h2>Player 2</h2>
+                <div class="characters" id="characters2">
+                    <!-- 9 character options -->
+                    <div class="character" data-name="Warrior">Warrior</div>
+                    <div class="character" data-name="Mage">Mage</div>
+                    <div class="character" data-name="Rogue">Rogue</div>
+                    <div class="character" data-name="Hunter">Hunter</div>
+                    <div class="character" data-name="Priest">Priest</div>
+                    <div class="character" data-name="Warlock">Warlock</div>
+                    <div class="character" data-name="Paladin">Paladin</div>
+                    <div class="character" data-name="Druid">Druid</div>
+                    <div class="character" data-name="Shaman">Shaman</div>
+                </div>
+            </div>
+        </div>
+        <div class="middle-button-container">
+            <button id="startGameBtn" class="center-button disabled" disabled>Start Game</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="game-container">
+        <div class="players">
+            <div class="player" id="gamePlayer1">
+                <h2 id="gamePlayer1Name"></h2>
+                <div class="game-info">
+                    <div class="counter" id="p1Health">❤️ 30</div>
+                    <div class="counter" id="p1Mana">💎 0</div>
+                    <div class="counter" id="p1Fatigue">💀 0</div>
+                </div>
+            </div>
+            <div class="player" id="gamePlayer2">
+                <h2 id="gamePlayer2Name"></h2>
+                <div class="game-info">
+                    <div class="counter" id="p2Health">❤️ 30</div>
+                    <div class="counter" id="p2Mana">💎 0</div>
+                    <div class="counter" id="p2Fatigue">💀 0</div>
+                </div>
+            </div>
+        </div>
+        <div class="middle-button-container">
+            <button id="turnBtn" class="center-button fade">End Turn</button>
+        </div>
+        <div class="middle-button-container" id="turnInfo">
+            <!-- Display coinflip result and turn info -->
+        </div>
+        <div class="rng-container">
+            <input type="number" id="rngMax" placeholder="Max">
+            <button id="rngBtn" class="center-button fade">Roll RNG</button>
+            <div id="rngResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global game state
+        const state = {
+            player1: { name: null, health: 30, mana: 0, fatigue: 0 },
+            player2: { name: null, health: 30, mana: 0, fatigue: 0 },
+            currentTurn: null // 'player1' or 'player2'
+        };
+
+        // Elements
+        const mask = document.getElementById('mask');
+        const setupBtn = document.getElementById('setupBtn');
+        const selectionScreen = document.getElementById('selectionScreen');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const characters1 = document.getElementById('characters1');
+        const characters2 = document.getElementById('characters2');
+        const gameScreen = document.getElementById('gameScreen');
+        const gamePlayer1Name = document.getElementById('gamePlayer1Name');
+        const gamePlayer2Name = document.getElementById('gamePlayer2Name');
+        const turnBtn = document.getElementById('turnBtn');
+        const turnInfo = document.getElementById('turnInfo');
+        const rngBtn = document.getElementById('rngBtn');
+        const rngMax = document.getElementById('rngMax');
+        const rngResult = document.getElementById('rngResult');
+
+        let selection = { player1: null, player2: null };
+
+        // Setup: reveal selection screen on setup button click
+        setupBtn.addEventListener('click', () => {
+            mask.classList.add('hidden');
+            // Show selection screen after transition
+            setTimeout(() => {
+                selectionScreen.classList.add('active');
+            }, 500);
+        });
+
+        function updateTextWithFade(newText, element) {
+            // Fade out by setting opacity to 0.
+            element.style.opacity = 0;
+
+            // Wait for the fade-out transition to complete (0.5s in this case).
+            setTimeout(() => {
+                // Update the text content with the new text.
+                element.textContent = newText;
+
+                // Fade the element back in.
+                element.style.opacity = 1;
+            }, 500); // This delay should match the CSS transition duration.
+        }
+
+        // Handle character selection
+        function setupCharacterSelection(playerDiv, playerKey) {
+            playerDiv.querySelectorAll('.character').forEach(character => {
+                character.addEventListener('click', () => {
+                    // Unselect any previously selected character
+                    playerDiv.querySelectorAll('.character').forEach(c => c.classList.remove('selected'));
+                    character.classList.add('selected');
+                    selection[playerKey] = character.getAttribute('data-name');
+                    // Enable start button if both players have selected
+                    if (selection.player1 && selection.player2) {
+                        startGameBtn.disabled = false;
+                        startGameBtn.classList.remove('disabled');
+                    }
+                });
+            });
+        }
+        setupCharacterSelection(characters1, 'player1');
+        setupCharacterSelection(characters2, 'player2');
+
+        // Start game button click
+        startGameBtn.addEventListener('click', () => {
+            // Set player names from selection
+            state.player1.name = "[P1] " + selection.player1;
+            state.player2.name = "[P2] " + selection.player2;
+            // Decide who goes first with coinflip
+            state.currentTurn = (Math.random() < 0.5) ? 'player1' : 'player2';
+            turnInfo.textContent = `${state.currentTurn === 'player1' ? state.player1.name : state.player2.name} goes first!`;
+            if (state.currentTurn === 'player1') {
+                state.player1.mana++;
+                document.getElementById('p1Mana').textContent = `💎 ${state.player1.mana}`;
+                gamePlayer1Name.classList.add("glow");
+            } else {
+                state.player2.mana++;
+                document.getElementById('p2Mana').textContent = `💎 ${state.player2.mana}`;
+                gamePlayer2Name.classList.add("glow");
+            }
+            // Set names on game screen
+            gamePlayer1Name.textContent = state.player1.name;
+            gamePlayer2Name.textContent = state.player2.name;
+            // Hide selection screen and show game screen
+            selectionScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            updateTextWithFade(`End ${state.currentTurn === 'player1' ? state.player1.name : state.player2.name}'s turn`, turnBtn);
+        });
+
+        // End turn button click
+        turnBtn.addEventListener('click', () => {
+            turnInfo.textContent = ``;
+            // Switch turn and increment mana (max 10) for the new current turn
+            state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
+            if (state.currentTurn === 'player1') {
+                if (state.player1.mana < 10) state.player1.mana++;
+                document.getElementById('p1Mana').textContent = `💎 ${state.player1.mana}`;
+                gamePlayer1Name.classList.add("glow");
+                gamePlayer2Name.classList.remove("glow");
+            } else {
+                if (state.player2.mana < 10) state.player2.mana++;
+                document.getElementById('p2Mana').textContent = `💎 ${state.player2.mana}`;
+                gamePlayer1Name.classList.remove("glow");
+                gamePlayer2Name.classList.add("glow");
+            }
+            updateTextWithFade(`End ${state.currentTurn === 'player1' ? state.player1.name : state.player2.name}'s turn`, turnBtn);
+        });
+
+        // Allow manual editing by clicking on counters
+        function setupCounterEdit(counterId, playerKey, property) {
+            const counterElem = document.getElementById(counterId);
+            counterElem.addEventListener('click', () => {
+                const newVal = prompt(`Set new value for ${property} for ${state[playerKey].name}:`, state[playerKey][property]);
+                const num = parseInt(newVal);
+                if (!isNaN(num)) {
+                    state[playerKey][property] = num;
+                    let emoji = '';
+                    if (property === 'health') emoji = '❤️';
+                    else if (property === 'mana') emoji = '💎';
+                    else if (property === 'fatigue') emoji = '💀';
+                    counterElem.textContent = `${emoji} ${num}`;
+                }
+            });
+        }
+        setupCounterEdit('p1Health', 'player1', 'health');
+        setupCounterEdit('p1Mana', 'player1', 'mana');
+        setupCounterEdit('p1Fatigue', 'player1', 'fatigue');
+        setupCounterEdit('p2Health', 'player2', 'health');
+        setupCounterEdit('p2Mana', 'player2', 'mana');
+        setupCounterEdit('p2Fatigue', 'player2', 'fatigue');
+
+        // RNG functionality
+        rngBtn.addEventListener('click', () => {
+            const max = parseInt(rngMax.value);
+            if (!isNaN(max) && max > 0) {
+                const roll = Math.floor(Math.random() * max) + 1;
+                updateTextWithFade(`Rolled: ${roll}`, rngBtn);
+            } else {
+                rngResult.textContent = `Please enter a valid max number.`;
+                setTimeout(() => {
+                    rngResult.textContent = ``;
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+
+</html>
